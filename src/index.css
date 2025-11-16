@@ -5,3 +5,18 @@
 html, body, #root {
 height: 100%;
 }
+
+.piano-scroll {
+overflow-y: auto;
+}
+
+
+.note-dot {
+width: 18px;
+height: 18px;
+border-radius: 999px;
+display: flex;
+align-items: center;
+justify-content: center;
+box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
