@@ -8,6 +8,7 @@ import {
   deleteNoteFromStorage,
   updateNoteToStorage,
 } from "../../utils/storage";
+import { ToastMessage } from "../Messages";
 
 export function NoteFormModal({
   onClose,
@@ -26,6 +27,7 @@ export function NoteFormModal({
     color: "#222222",
     icon: "",
   });
+  const [result, setResult] = useState({ type: "", message: "" });
 
   useEffect(() => {
     if (initialData) {
@@ -69,7 +71,7 @@ export function NoteFormModal({
       );
 
       if (noteInvalid) {
-        window.alert("Note already exists!");
+        setResult({ type: "error", message: "Note already exists!" });
         return;
       }
 
@@ -82,7 +84,10 @@ export function NoteFormModal({
     onClose();
 
     if (result) {
-      window.alert(result.message);
+      setResult({
+        type: result ? "success" : "error",
+        message: result.message,
+      });
     }
   };
 
@@ -97,7 +102,10 @@ export function NoteFormModal({
     });
     onClose();
     if (result) {
-      window.alert(result.message);
+      setResult({
+        type: result ? "success" : "error",
+        message: result.message,
+      });
     }
   };
 
@@ -233,6 +241,7 @@ export function NoteFormModal({
           </div>
         </form>
       </div>
+      <ToastMessage message={result?.message} type={result?.type} />
     </div>
   );
 }

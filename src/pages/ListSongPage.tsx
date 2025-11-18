@@ -14,12 +14,14 @@ import { useMidiDispatch } from "../hooks";
 import { EActionType } from "../types/contextType";
 import { exportMidiJson, importMidiJson } from "../utils/helper";
 import { TEMPLATE } from "../utils/constants";
+import { ToastMessage } from "../components";
 
 export default function ListSong() {
   const navigate = useNavigate();
   const dispatch = useMidiDispatch();
 
   const [showNotes, setShowNotes] = useState<string>("");
+  const [result, setResult] = useState({ type: "", message: "" });
   const [songs, setSongs] = useState<IMidiSong[]>([]);
   const [songFocus, setSongfocus] = useState<IMidiSong | null>(null);
   const [toggleCreateSong, setToggleCreateSong] = useState<boolean>(false);
@@ -59,7 +61,10 @@ export default function ListSong() {
     setToggleCreateSong(false);
 
     if (result) {
-      window.alert(result.message);
+      setResult({
+        type: result ? "success" : "error",
+        message: result.message,
+      });
     }
   };
 
@@ -71,7 +76,10 @@ export default function ListSong() {
     setToggleConfirmDelete(false);
 
     if (result) {
-      window.alert(result.message);
+      setResult({
+        type: result ? "success" : "error",
+        message: result.message,
+      });
     }
   };
 
@@ -143,14 +151,18 @@ export default function ListSong() {
 
                 <button
                   className="px-3 py-1 text-sm bg-yellow-400 hover:bg-yellow-500 text-white rounded"
-                  onClick={() => handleRedirectEditor(song)}
+                  onClick={(event) => {
+                    event.stopPropagation();
+                    handleRedirectEditor(song);
+                  }}
                 >
                   View Editor
                 </button>
 
                 <button
                   className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setSongfocus(song);
                     setToggleCreateSong(true);
                   }}
@@ -160,7 +172,8 @@ export default function ListSong() {
 
                 <button
                   className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     exportMidiJson({ name: song.name, object: song });
                   }}
                 >
@@ -169,7 +182,8 @@ export default function ListSong() {
 
                 <button
                   className="px-3 py-1 text-sm bg-red-400 hover:bg-red-500 text-white rounded ml-1"
-                  onClick={() => {
+                  onClick={(event) => {
+                    event.stopPropagation();
                     setSongfocus(song);
                     setToggleConfirmDelete(true);
                   }}
@@ -186,7 +200,7 @@ export default function ListSong() {
                   {song?.notes.map((note) => (
                     <div
                       key={note.id}
-                      className="p-3 text-sm flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition"
+                      className="p-3 text-sm flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition mb-2"
                     >
                       <div
                         className="w-2 h-2 rounded-full"
@@ -235,6 +249,8 @@ export default function ListSong() {
           onCancel={handleCancel}
         />
       )}
+
+      <ToastMessage message={result?.message} type={result?.type} />
     </Layout>
   );
 }

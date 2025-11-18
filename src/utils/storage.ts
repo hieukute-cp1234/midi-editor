@@ -65,7 +65,7 @@ export function updateSongToStorage(song: IMidiSong) {
 
 export function deleteSongFromStorage(id: string) {
   const allSongs = getSongsFromStorage({});
-  const songNeedDelete = allSongs.find((song: IMidiSong) => song.id !== id);
+  const songNeedDelete = allSongs.find((song: IMidiSong) => song.id === id);
 
   if (!songNeedDelete)
     return {
