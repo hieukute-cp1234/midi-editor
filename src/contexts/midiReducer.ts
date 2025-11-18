@@ -5,28 +5,6 @@ export const initialStates = {
   currentSong: null,
 };
 
-export const initDefaultState = () => {
-  try {
-    const raw = localStorage.getItem("midi_notes");
-
-    return raw
-      ? JSON.parse(raw)
-      : [
-          {
-            track: 4,
-            time: 1,
-            title: "sdsd",
-            description: "đưa",
-            color: "#ff4757",
-            icon: "",
-          },
-        ];
-  } catch (e) {
-    console.error("load notes", e);
-    return [];
-  }
-};
-
 export function midiReducer(state: IInititalState, action: TMidiAction) {
   switch (action.type) {
     case "ADD_NOTE": {
@@ -71,20 +49,6 @@ export function midiReducer(state: IInititalState, action: TMidiAction) {
 
     case "SET_CURRENT_NOTE":
       return { ...state, currentNote: action.payload.note };
-
-    case "CREATE_SONG": {
-      return { ...state, songs: [...state.songs, action.payload.song] };
-    }
-
-    case "UPDATE_SONG": {
-      const newNotes = state.songs.map((song) =>
-        song.id === action.payload.song?.id
-          ? { ...song, ...action.payload.song }
-          : song
-      );
-
-      return { ...state, notes: newNotes };
-    }
 
     case "SET_CURRENT_SONG":
       return { ...state, currentSong: action.payload.song };

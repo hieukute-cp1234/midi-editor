@@ -60,12 +60,6 @@ export default function EditorPage() {
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold">{currentSong?.name || ""}</h1>
           <button
-            className="px-3 py-1 bg-indigo-600 text-white rounded ml-auto mr-1"
-            onClick={openAdd}
-          >
-            Save
-          </button>
-          <button
             className="px-3 py-1 bg-indigo-600 text-white rounded"
             onClick={openAdd}
           >
@@ -76,8 +70,8 @@ export default function EditorPage() {
         <div className="border rounded-md overflow-hidden">
           <TrackHeaders tracks={currentSong?.trackLabels || []} />
           <div className="flex piano-scroll">
-            <TimeRuler />
-            <div className="flex-1 h-[600px] relative bg-white">
+            <TimeRuler totalTime={currentSong?.totalDuration} />
+            <div className="flex-1 relative bg-white">
               <EditorGrid song={currentSong} />
             </div>
           </div>

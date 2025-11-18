@@ -27,7 +27,6 @@ export interface IMidiSong {
   description: string;
   totalDuration: number;
   trackLabels: TrackLabel[];
-  tags?: string;
   notes: IMidiNote[];
   createdAt?: number;
   updatedAt?: number;

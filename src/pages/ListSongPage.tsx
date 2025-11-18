@@ -1,12 +1,19 @@
 import { Layout } from "../layouts";
 import { useEffect, useState } from "react";
-import { getSongsFromStorage, deleteSongFromStorage } from "../utils/storage";
+import {
+  getSongsFromStorage,
+  deleteSongFromStorage,
+  createSongToStorage,
+  createMultiSongToStorage,
+} from "../utils/storage";
 import type { IMidiSong } from "../types";
-import { CreateSongModal } from "../components/CreateSongModal";
-import { ConfirmModal } from "../components/ConfirmModal";
+import { CreateSongModal } from "../components/Modals";
+import { ConfirmModal } from "../components/Modals/ConfirmModal";
 import { useNavigate } from "react-router-dom";
 import { useMidiDispatch } from "../hooks";
 import { EActionType } from "../types/contextType";
+import { exportMidiJson, importMidiJson } from "../utils/helper";
+import { TEMPLATE } from "../utils/constants";
 
 export default function ListSong() {
   const navigate = useNavigate();
@@ -19,14 +26,23 @@ export default function ListSong() {
     useState<boolean>(false);
 
   const handleRedirectEditor = (song: IMidiSong) => {
-    console.log("editor", song);
     dispatch({ type: EActionType.SET_CURRENT_SONG, payload: { song } });
     navigate("/editor");
   };
 
   const loadSongs = () => {
-    const listSongs = getSongsFromStorage();
+    const listSongs = getSongsFromStorage({ deep: true });
     setSongs(listSongs);
+  };
+
+  const handleInsertSongs = (songs: IMidiSong | IMidiSong[]) => {
+    if (Array.isArray(songs)) {
+      createMultiSongToStorage(songs);
+    } else {
+      createSongToStorage(songs);
+    }
+
+    loadSongs();
   };
 
   const handleReloadSong = () => {
@@ -58,12 +74,28 @@ export default function ListSong() {
       <div className="w-full max-w-4xl mx-auto bg-white rounded-lg shadow">
         <div className="p-4 border-b flex items-center">
           <h2 className="text-xl font-semibold">Song list</h2>
-          <button
-            className="ml-auto bg-green-400 hover:bg-green-500 text-white rounded px-2 py-1"
-            onClick={() => setToggleCreateSong(true)}
-          >
-            + Add
-          </button>
+          <div className="ml-auto">
+            <button
+              className="ml-2 bg-green-400 hover:bg-green-500 text-white rounded px-2 py-1"
+              onClick={() => importMidiJson(handleInsertSongs)}
+            >
+              Import
+            </button>
+            <button
+              className="ml-2 bg-green-400 hover:bg-green-500 text-white rounded px-2 py-1"
+              onClick={() =>
+                exportMidiJson({ name: "midi-template", object: TEMPLATE })
+              }
+            >
+              Export template
+            </button>
+            <button
+              className="ml-2 bg-green-400 hover:bg-green-500 text-white rounded px-2 py-1"
+              onClick={() => setToggleCreateSong(true)}
+            >
+              Create
+            </button>
+          </div>
         </div>
 
         <div className="divide-y">
@@ -105,6 +137,15 @@ export default function ListSong() {
                 }}
               >
                 Edit
+              </button>
+
+              <button
+                className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
+                onClick={() => {
+                  exportMidiJson({ name: song.name, object: song });
+                }}
+              >
+                Export
               </button>
 
               <button

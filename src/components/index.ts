@@ -1,4 +1,4 @@
 export * from "./EditorGrid";
 export * from "./TimeRuler";
 export * from "./TrackHeaders";
-export * from "./NoteFormModal";
+export * from "./Modals";

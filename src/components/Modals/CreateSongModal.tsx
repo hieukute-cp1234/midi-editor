@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { createSongToStorage, updateSongToStorage } from "../utils/storage";
 import { v4 as uuid } from "uuid";
-import type { IMidiSong } from "../types";
+import { createSongToStorage, updateSongToStorage } from "../../utils/storage";
+import type { IMidiSong } from "../../types";
 
 interface IErrors {
   name: string;

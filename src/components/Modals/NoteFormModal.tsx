@@ -1,8 +1,13 @@
 import { useEffect, useState } from "react";
-import type { IMidiNote, INoteFormModalProps } from "../types";
-import { useMidiDispatch } from "../hooks";
-import { EActionType } from "../types/contextType";
+import type { IMidiNote, INoteFormModalProps } from "../../types";
+import { useMidiDispatch } from "../../hooks";
+import { EActionType } from "../../types/contextType";
 import { v4 as uuid } from "uuid";
+import {
+  createNoteToStorage,
+  deleteNoteFromStorage,
+  updateNoteToStorage,
+} from "../../utils/storage";
 
 export function NoteFormModal({
   onClose,
@@ -58,18 +63,34 @@ export function NoteFormModal({
       return;
     }
 
+    const newNote = { id: uuid(), ...formNote, songId: song?.id || "" };
+
     if (initialData) {
       dispatch({
         type: EActionType.UPDATE_NOTE,
-        payload: { note: { id: uuid(), ...formNote, songId: song?.id || "" } },
+        payload: { note: newNote },
       });
+      updateNoteToStorage(newNote);
     } else {
       dispatch({
         type: EActionType.ADD_NOTE,
-        payload: { note: { id: uuid(), ...formNote, songId: song?.id || "" } },
+        payload: { note: newNote },
       });
+      createNoteToStorage(newNote, song?.id || "");
     }
 
+    onClose();
+  };
+
+  const handleDeleteNote = () => {
+    dispatch({
+      type: EActionType.DELETE_NOTE,
+      payload: { noteId: initialData?.id || "" },
+    });
+    deleteNoteFromStorage({
+      noteId: initialData?.id || "",
+      songId: initialData?.songId || "",
+    });
     onClose();
   };
 
@@ -192,6 +213,16 @@ export function NoteFormModal({
             >
               {initialData ? "Save Changes" : "Add Note"}
             </button>
+
+            {!!initialData && (
+              <button
+                type="button"
+                className="px-4 py-2 rounded bg-red-600 text-white"
+                onClick={handleDeleteNote}
+              >
+                Delete
+              </button>
+            )}
           </div>
         </form>
       </div>

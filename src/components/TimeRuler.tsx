@@ -1,13 +1,14 @@
 import { MAX_DURATION } from "../utils/constants";
 
-export function TimeRuler() {
-  const marks = Array.from({ length: MAX_DURATION / 2 / 5 + 1 }).map(
+export function TimeRuler({ totalTime }: { totalTime?: number }) {
+  const marks = Array.from(
+    { length: Math.floor((totalTime || MAX_DURATION) / 10) + 1 },
     (_, i) => i * 10
   );
 
   return (
     <div className="w-16 pl-2 bg-gray-100 border-r">
-      <div className="">
+      <div>
         {marks.map((m) => (
           <div
             key={m}

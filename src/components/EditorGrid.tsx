@@ -6,11 +6,11 @@ import {
   NUMBER_TRACK,
   TIME_STEP,
 } from "../utils/constants";
-import { NoteFormModal } from "./NoteFormModal";
+import { NoteFormModal } from "./Modals/NoteFormModal";
 
 export function EditorGrid({ song }: { song: IMidiSong | null }) {
   const { cellHeight } = GRID;
-  const rows = Math.ceil(MAX_DURATION / TIME_STEP);
+  const rows = Math.ceil((song?.totalDuration || MAX_DURATION) / TIME_STEP);
 
   const [openModal, setOpenModal] = useState<boolean>(false);
   const [initDataForm, setInitDataForm] = useState<IMidiNote | null>(null);
