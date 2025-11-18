@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { v4 as uuid } from "uuid";
 import { createSongToStorage, updateSongToStorage } from "../../utils/storage";
-import type { IMidiSong } from "../../types";
+import type { ICreateSongModalProps, IMidiSong } from "../../types";
 
 interface IErrors {
   name: string;
@@ -12,11 +12,7 @@ export function CreateSongModal({
   currentSong,
   onCancel,
   onSubmited,
-}: {
-  currentSong: IMidiSong | null;
-  onCancel: () => void;
-  onSubmited: (result: null | { message: string }) => void;
-}) {
+}: ICreateSongModalProps) {
   const [formData, setFormData] = useState<IMidiSong>({
     id: "",
     name: "",

@@ -1,7 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import EditorPage from "./pages/EditorPage";
 import ListSongPage from "./pages/ListSongPage";
-import { MidiProvider } from "./contexts/MidiProvider";
+import { MidiProvider } from "./contexts";
 
 export default function App() {
   return (

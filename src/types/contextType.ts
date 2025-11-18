@@ -1,4 +1,8 @@
-import type { IMidiNote, IMidiSong } from ".";
+import type { IMidiNote, IMidiSong } from "./commonTypes";
+
+export interface IContextProps {
+  children: React.ReactNode;
+}
 
 export interface IInititalState {
   currentNode: null | IMidiNote;

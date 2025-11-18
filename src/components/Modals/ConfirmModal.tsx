@@ -1,14 +1,11 @@
+import type { IConfirmModalProps } from "../../types";
+
 export function ConfirmModal({
   title,
   description,
   onCancel,
   onOk,
-}: {
-  title: string;
-  description: string;
-  onCancel: () => void;
-  onOk: () => void;
-}) {
+}: IConfirmModalProps) {
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg shadow-lg p-6 w-full max-w-md">
