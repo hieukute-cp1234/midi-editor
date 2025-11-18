@@ -15,7 +15,7 @@ export function CreateSongModal({
 }: {
   currentSong: IMidiSong | null;
   onCancel: () => void;
-  onSubmited: () => void;
+  onSubmited: (result: null | { message: string }) => void;
 }) {
   const [formData, setFormData] = useState<IMidiSong>({
     id: "",
@@ -61,10 +61,11 @@ export function CreateSongModal({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    let result = null;
     if (currentSong) {
-      updateSongToStorage({ ...formData, updatedAt: Date.now() });
+      result = updateSongToStorage({ ...formData, updatedAt: Date.now() });
     } else {
-      createSongToStorage({
+      result = createSongToStorage({
         id: uuid(),
         name: formData.name,
         totalDuration: formData.totalDuration,
@@ -75,7 +76,7 @@ export function CreateSongModal({
         updatedAt: Date.now(),
       });
     }
-    onSubmited();
+    onSubmited(result);
   };
 
   useEffect(() => {

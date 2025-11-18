@@ -19,6 +19,7 @@ export default function ListSong() {
   const navigate = useNavigate();
   const dispatch = useMidiDispatch();
 
+  const [showNotes, setShowNotes] = useState<string>("");
   const [songs, setSongs] = useState<IMidiSong[]>([]);
   const [songFocus, setSongfocus] = useState<IMidiSong | null>(null);
   const [toggleCreateSong, setToggleCreateSong] = useState<boolean>(false);
@@ -35,6 +36,14 @@ export default function ListSong() {
     setSongs(listSongs);
   };
 
+  const handleClickRow = (songId: string) => {
+    if (showNotes === songId) {
+      setShowNotes("");
+      return;
+    }
+    setShowNotes(songId);
+  };
+
   const handleInsertSongs = (songs: IMidiSong | IMidiSong[]) => {
     if (Array.isArray(songs)) {
       createMultiSongToStorage(songs);
@@ -45,17 +54,25 @@ export default function ListSong() {
     loadSongs();
   };
 
-  const handleReloadSong = () => {
+  const handleReloadSong = (result: null | { message: string }) => {
     loadSongs();
     setToggleCreateSong(false);
+
+    if (result) {
+      window.alert(result.message);
+    }
   };
 
   const handleDeleteSong = () => {
     if (!songFocus) return;
-    deleteSongFromStorage(songFocus.id);
+    const result = deleteSongFromStorage(songFocus.id);
     setSongfocus(null);
     loadSongs();
     setToggleConfirmDelete(false);
+
+    if (result) {
+      window.alert(result.message);
+    }
   };
 
   const handleCancel = () => {
@@ -112,51 +129,91 @@ export default function ListSong() {
             </div>
           )}
 
-          {songs.map((song, i) => (
+          {songs.map((song) => (
             <div
-              key={i}
-              className="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
+              key={song.id}
+              className="hover:bg-gray-50 cursor-pointer"
+              onClick={() => handleClickRow(song.id)}
             >
-              <div className="flex items-center gap-3 flex-1">
-                <div className="w-2 h-2 bg-blue-500 rounded-full" />
-                <span className="text-gray-800">{song.name}</span>
+              <div className="flex items-center justify-between px-4 py-3 hover:bg-gray-50 w-full">
+                <div className="flex items-center gap-3 flex-1">
+                  <div className="w-2 h-2 bg-blue-500 rounded-full" />
+                  <span className="text-gray-800">{song.name}</span>
+                </div>
+
+                <button
+                  className="px-3 py-1 text-sm bg-yellow-400 hover:bg-yellow-500 text-white rounded"
+                  onClick={() => handleRedirectEditor(song)}
+                >
+                  View Editor
+                </button>
+
+                <button
+                  className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
+                  onClick={() => {
+                    setSongfocus(song);
+                    setToggleCreateSong(true);
+                  }}
+                >
+                  Edit
+                </button>
+
+                <button
+                  className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
+                  onClick={() => {
+                    exportMidiJson({ name: song.name, object: song });
+                  }}
+                >
+                  Export
+                </button>
+
+                <button
+                  className="px-3 py-1 text-sm bg-red-400 hover:bg-red-500 text-white rounded ml-1"
+                  onClick={() => {
+                    setSongfocus(song);
+                    setToggleConfirmDelete(true);
+                  }}
+                >
+                  Delete
+                </button>
               </div>
 
-              <button
-                className="px-3 py-1 text-sm bg-yellow-400 hover:bg-yellow-500 text-white rounded"
-                onClick={() => handleRedirectEditor(song)}
-              >
-                View
-              </button>
+              {showNotes === song.id && (
+                <div className="px-4 py-3 pb-4">
+                  <div className="font-semibold text-sm text-gray-700 mb-2 border-b pb-2">
+                    Notes ({song?.notes.length})
+                  </div>
+                  {song?.notes.map((note) => (
+                    <div
+                      key={note.id}
+                      className="p-3 text-sm flex items-start gap-3 rounded-lg border border-gray-200 bg-gray-50 hover:bg-gray-100 transition"
+                    >
+                      <div
+                        className="w-2 h-2 rounded-full"
+                        style={{ backgroundColor: note.color }}
+                      ></div>
 
-              <button
-                className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
-                onClick={() => {
-                  setSongfocus(song);
-                  setToggleCreateSong(true);
-                }}
-              >
-                Edit
-              </button>
+                      <div className="flex-1 grid grid-cols-2 gap-2">
+                        <span className="text-gray-800 truncate">
+                          <strong>Title:</strong>
+                          {note.title}
+                        </span>
 
-              <button
-                className="px-3 py-1 text-sm bg-blue-400 hover:bg-blue-500 text-white rounded ml-1"
-                onClick={() => {
-                  exportMidiJson({ name: song.name, object: song });
-                }}
-              >
-                Export
-              </button>
+                        <span className="text-gray-600">
+                          <strong>Description:</strong> {note.description}
+                        </span>
+                        <span className="text-gray-700">
+                          <strong>Track:</strong> {note.track}
+                        </span>
 
-              <button
-                className="px-3 py-1 text-sm bg-red-400 hover:bg-red-500 text-white rounded ml-1"
-                onClick={() => {
-                  setSongfocus(song);
-                  setToggleConfirmDelete(true);
-                }}
-              >
-                Delete
-              </button>
+                        <span className="text-gray-600">
+                          <strong>Time:</strong> {note.time}s
+                        </span>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
             </div>
           ))}
         </div>

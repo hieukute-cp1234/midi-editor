@@ -53,33 +53,37 @@ export function NoteFormModal({
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    const noteInvalid = song?.notes?.find(
-      (note) =>
-        `${note.track}-${note.time}` === `${formNote.track}-${formNote.time}`
-    );
-
-    if (noteInvalid) {
-      window.alert("Note already exists!");
-      return;
-    }
-
     const newNote = { id: uuid(), ...formNote, songId: song?.id || "" };
+    let result = null;
 
     if (initialData) {
       dispatch({
         type: EActionType.UPDATE_NOTE,
         payload: { note: newNote },
       });
-      updateNoteToStorage(newNote);
+      result = updateNoteToStorage(newNote);
     } else {
+      const noteInvalid = song?.notes?.find(
+        (note) =>
+          `${note.track}-${note.time}` === `${formNote.track}-${formNote.time}`
+      );
+
+      if (noteInvalid) {
+        window.alert("Note already exists!");
+        return;
+      }
+
       dispatch({
         type: EActionType.ADD_NOTE,
         payload: { note: newNote },
       });
-      createNoteToStorage(newNote, song?.id || "");
+      result = createNoteToStorage(newNote, song?.id || "");
     }
-
     onClose();
+
+    if (result) {
+      window.alert(result.message);
+    }
   };
 
   const handleDeleteNote = () => {
@@ -87,11 +91,14 @@ export function NoteFormModal({
       type: EActionType.DELETE_NOTE,
       payload: { noteId: initialData?.id || "" },
     });
-    deleteNoteFromStorage({
+    const result = deleteNoteFromStorage({
       noteId: initialData?.id || "",
       songId: initialData?.songId || "",
     });
     onClose();
+    if (result) {
+      window.alert(result.message);
+    }
   };
 
   return (
@@ -113,7 +120,7 @@ export function NoteFormModal({
               className="border rounded p-2 w-full"
             >
               {song?.trackLabels?.map((label, index) => (
-                <option key={label + index} value={label}>
+                <option key={label + index} value={index + 1}>
                   {label}
                 </option>
               ))}

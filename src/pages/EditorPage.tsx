@@ -59,6 +59,15 @@ export default function EditorPage() {
         </div>
         <div className="mb-4 flex items-center justify-between">
           <h1 className="text-xl font-semibold">{currentSong?.name || ""}</h1>
+          {!currentSong?.id && (
+            <button
+              className="px-3 py-1 bg-indigo-600 text-white rounded ml-auto mr-1"
+              onClick={openAdd}
+            >
+              Save
+            </button>
+          )}
+
           <button
             className="px-3 py-1 bg-indigo-600 text-white rounded"
             onClick={openAdd}

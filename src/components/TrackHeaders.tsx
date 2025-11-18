@@ -3,7 +3,13 @@ import { NUMBER_TRACK } from "../utils/constants";
 import { useMidiDispatch } from "../hooks";
 import { EActionType } from "../types/contextType";
 
-export function TrackHeaders({ tracks }: { tracks: string[] }) {
+export function TrackHeaders({
+  tracks,
+  onUpdateSong,
+}: {
+  tracks: string[];
+  onUpdateSong?: (tracks: string[]) => void;
+}) {
   const dispatch = useMidiDispatch();
 
   const [editingIndex, setEditingIndex] = useState<number | null>(null);
@@ -31,6 +37,7 @@ export function TrackHeaders({ tracks }: { tracks: string[] }) {
       type: EActionType.UPDATE_TRACKS,
       payload: { tracks: trackNames },
     });
+    onUpdateSong?.(trackNames);
   };
 
   return (

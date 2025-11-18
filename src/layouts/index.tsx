@@ -8,7 +8,6 @@ export function Layout({ children }: { children: React.ReactNode }) {
           <Link to="/" className="mr-4">
             List song
           </Link>
-          <Link to="/editor">Editor</Link>
         </div>
       </nav>
       <main className="p-4">{children}</main>

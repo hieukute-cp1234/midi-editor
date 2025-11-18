@@ -30,9 +30,20 @@ export function EditorGrid({ song }: { song: IMidiSong | null }) {
           position: "relative",
         }}
       >
-        {Array.from({ length: NUMBER_TRACK * rows }).map((_, index) => (
-          <div key={index} className="border border-gray-100" />
-        ))}
+        {Array.from({ length: NUMBER_TRACK * rows }).map((_, index) => {
+          const rowIndex = Math.floor(index / NUMBER_TRACK);
+          const timeAtRow = rowIndex * TIME_STEP;
+          const isBoldBelow = timeAtRow % 10 === 0 && rowIndex !== 0;
+
+          return (
+            <div
+              key={index}
+              className={`border border-gray-100 ${
+                isBoldBelow ? "border-t-2 border-t-gray-400" : ""
+              }`}
+            />
+          );
+        })}
 
         {song?.notes?.map((note: IMidiNote) => {
           const percentWidthOneTrack = 100 / NUMBER_TRACK;

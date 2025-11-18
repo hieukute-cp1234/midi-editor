@@ -133,6 +133,7 @@ export function updateNoteToStorage(note: IMidiNote & { songId: string }) {
   localStorage.setItem("notes", JSON.stringify(updated));
 
   return {
+    status: true,
     message: "Update note success!",
   };
 }
