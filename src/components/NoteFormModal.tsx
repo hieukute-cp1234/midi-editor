@@ -1,19 +1,20 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { IMidiNote, INoteFormModalProps } from "../types";
 import { useMidiDispatch } from "../hooks";
 import { EActionType } from "../types/contextType";
 import { v4 as uuid } from "uuid";
 
 export function NoteFormModal({
-  isOpen,
   onClose,
   initialData,
   song,
 }: INoteFormModalProps) {
   const dispatch = useMidiDispatch();
 
+  const [errors, setErrors] = useState<{ [key: string]: string }>({});
   const [formNote, setDataNote] = useState<IMidiNote>({
     track: 1,
+    songId: song?.id || "",
     time: 0,
     title: "",
     description: "",
@@ -21,25 +22,56 @@ export function NoteFormModal({
     icon: "",
   });
 
+  useEffect(() => {
+    if (initialData) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setDataNote(initialData);
+    }
+  }, [initialData]);
+
   const handleChange = (
     e: React.ChangeEvent<
       HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement
     >
   ) => {
     const { name, value } = e.target;
+
+    if (name === "time") {
+      const num = Number(value);
+
+      if (num % 5 !== 0) {
+        setErrors((prev) => ({ ...prev, time: "Step is 5" }));
+      }
+    }
     setDataNote((prev) => ({ ...prev, [name]: value }));
   };
 
   const handleSubmit = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    dispatch({
-      type: EActionType.ADD_NOTE,
-      payload: { note: { id: uuid(), ...formNote } },
-    });
+    const noteInvalid = song?.notes?.find(
+      (note) =>
+        `${note.track}-${note.time}` === `${formNote.track}-${formNote.time}`
+    );
+
+    if (noteInvalid) {
+      window.alert("Note already exists!");
+      return;
+    }
+
+    if (initialData) {
+      dispatch({
+        type: EActionType.UPDATE_NOTE,
+        payload: { note: { id: uuid(), ...formNote, songId: song?.id || "" } },
+      });
+    } else {
+      dispatch({
+        type: EActionType.ADD_NOTE,
+        payload: { note: { id: uuid(), ...formNote, songId: song?.id || "" } },
+      });
+    }
+
     onClose();
   };
-
-  if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 bg-black/40 flex items-center justify-center z-50 p-4">
@@ -74,11 +106,18 @@ export function NoteFormModal({
             <input
               type="number"
               name="time"
+              step={5}
               min="0"
               value={formNote.time}
               onChange={handleChange}
-              className="border rounded p-2 w-full"
+              className={`border rounded p-2 w-full ${
+                errors.time ? "border-red-500" : "border-gray-300"
+              }`}
             />
+
+            {errors?.time && (
+              <p className="text-red-500 text-xs mt-1">{errors.time}</p>
+            )}
           </div>
 
           <div>
@@ -86,12 +125,18 @@ export function NoteFormModal({
             <input
               type="text"
               name="title"
-              value={song?.trackLabels[formNote.track]}
+              value={formNote.title || song?.trackLabels[formNote.track - 1]}
               onChange={handleChange}
-              className="border rounded p-2 w-full"
+              className={`border rounded p-2 w-full ${
+                errors.title ? "border-red-500" : "border-gray-300"
+              }`}
               placeholder="e.g. C4, Kick, Snare"
               required
             />
+
+            {errors?.title && (
+              <p className="text-red-500 text-xs mt-1">{errors.name}</p>
+            )}
           </div>
 
           <div>

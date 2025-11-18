@@ -1,7 +1,6 @@
 import type { IMidiNote, IMidiSong } from ".";
 
 export interface IInititalState {
-  songs: IMidiSong[];
   currentNode: null | IMidiNote;
   currentSong: null | IMidiSong;
 }

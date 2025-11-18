@@ -12,6 +12,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
         </div>
       </nav>
       <main className="p-4">{children}</main>
+      <div className="fixed"></div>
     </div>
   );
 }

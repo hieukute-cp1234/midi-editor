@@ -8,6 +8,7 @@ import {
 import { useMidiDispatch, useMidiStates } from "../hooks";
 import { EActionType } from "../types/contextType";
 import { Layout } from "../layouts";
+import { v4 as uuid } from "uuid";
 
 export default function EditorPage() {
   const dispatch = useMidiDispatch();
@@ -21,62 +22,29 @@ export default function EditorPage() {
     setOpenModal(false);
   };
 
-  console.log("currentSong", currentSong);
-
   useEffect(() => {
     if (!currentSong) {
+      const songId = uuid();
+
       dispatch({
         type: EActionType.SET_CURRENT_SONG,
         payload: {
           song: {
-            id: "",
+            id: songId,
             name: "Rock Beat 120 BPM",
             description: "Simple rock drum pattern",
-            totalDuration: 30,
+            totalDuration: 300,
             trackLabels: [
-              "Kick",
-              "Snare",
-              "Hi-Hat",
-              "Crash",
-              "Ride",
-              "Tom 1",
-              "Tom 2",
-              "Tambourine",
+              "Track 1",
+              "Track 2",
+              "Track 3",
+              "Track 4",
+              "Track 5",
+              "Track 6",
+              "Track 7",
+              "Track 8",
             ],
-            notes: [
-              {
-                id: "1",
-                track: 1,
-                time: 0,
-                title: "Kick",
-                description: "Main kick drum hit",
-                color: "#EF4444",
-              },
-              {
-                id: "2",
-                track: 2,
-                time: 1,
-                title: "Snare",
-                description: "Backbeat snare",
-                color: "#3B82F6",
-              },
-              {
-                id: "3",
-                track: 1,
-                time: 2,
-                title: "Kick",
-                description: "Follow-up kick",
-                color: "#EF4444",
-              },
-              {
-                id: "4",
-                track: 3,
-                time: 0.5,
-                title: "Hi-Hat",
-                description: "Closed hi-hat",
-                color: "#10B981",
-              },
-            ],
+            notes: [],
           },
         },
       });
@@ -87,9 +55,16 @@ export default function EditorPage() {
     <Layout>
       <div className="p-4">
         <div className="mb-4 flex items-center justify-between">
-          <h1 className="text-xl font-semibold">
-            MIDI Editor — Piano Roll (vertical time)
-          </h1>
+          <h1 className="text-xl font-semibold">MIDI Editor — Piano Roll</h1>
+        </div>
+        <div className="mb-4 flex items-center justify-between">
+          <h1 className="text-xl font-semibold">{currentSong?.name || ""}</h1>
+          <button
+            className="px-3 py-1 bg-indigo-600 text-white rounded ml-auto mr-1"
+            onClick={openAdd}
+          >
+            Save
+          </button>
           <button
             className="px-3 py-1 bg-indigo-600 text-white rounded"
             onClick={openAdd}
@@ -100,15 +75,15 @@ export default function EditorPage() {
 
         <div className="border rounded-md overflow-hidden">
           <TrackHeaders tracks={currentSong?.trackLabels || []} />
-          <div className="flex">
+          <div className="flex piano-scroll">
             <TimeRuler />
-            <div className="flex-1 h-[600px] piano-scroll relative bg-white">
+            <div className="flex-1 h-[600px] relative bg-white">
               <EditorGrid song={currentSong} />
             </div>
           </div>
         </div>
 
-        <NoteFormModal isOpen={openModal} song={currentSong} onClose={close} />
+        {openModal && <NoteFormModal song={currentSong} onClose={close} />}
       </div>
     </Layout>
   );

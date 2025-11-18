@@ -1,7 +1,6 @@
 import type { TMidiAction, IInititalState } from "../types/contextType";
 
 export const initialStates = {
-  songs: [],
   currentNode: null,
   currentSong: null,
 };
@@ -10,7 +9,18 @@ export const initDefaultState = () => {
   try {
     const raw = localStorage.getItem("midi_notes");
 
-    return raw ? JSON.parse(raw) : [];
+    return raw
+      ? JSON.parse(raw)
+      : [
+          {
+            track: 4,
+            time: 1,
+            title: "sdsd",
+            description: "đưa",
+            color: "#ff4757",
+            icon: "",
+          },
+        ];
   } catch (e) {
     console.error("load notes", e);
     return [];
@@ -21,7 +31,7 @@ export function midiReducer(state: IInititalState, action: TMidiAction) {
   switch (action.type) {
     case "ADD_NOTE": {
       if (!action.payload?.note?.id || !state.currentSong) return state;
-      console.log(action.payload.note);
+
       return {
         ...state,
         currentSong: {

@@ -1,7 +1,6 @@
 export interface INoteFormModalProps {
-  isOpen: boolean;
   onClose: () => void;
-  initialData?: IMidiNote;
+  initialData?: IMidiNote | null;
   song: IMidiSong | null;
 }
 
@@ -11,6 +10,7 @@ export interface IContextProps {
 
 export interface IMidiNote {
   id?: string;
+  songId: string;
   track: number;
   time: number;
   title: string;

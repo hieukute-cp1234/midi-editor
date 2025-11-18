@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { GRID } from "../utils/constants";
+import { NUMBER_TRACK } from "../utils/constants";
 import { useMidiDispatch } from "../hooks";
 import { EActionType } from "../types/contextType";
 
@@ -35,9 +35,9 @@ export function TrackHeaders({ tracks }: { tracks: string[] }) {
 
   return (
     <div className="flex bg-gray-50 border-b">
-      <div className="w-16"></div>
+      <div className="w-16 p-2 border-r">Track / Time</div>
       <div className="flex-1 grid grid-cols-8">
-        {Array.from({ length: tracks?.length || GRID.tracks }).map(
+        {Array.from({ length: tracks?.length || NUMBER_TRACK }).map(
           (_, index) => (
             <div
               key={index}
